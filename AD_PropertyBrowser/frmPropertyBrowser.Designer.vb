@@ -22,6 +22,7 @@ Partial Class frmPropertyBrowser
     'Das Bearbeiten mit dem Code-Editor ist nicht möglich.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmPropertyBrowser))
         Me.ctr_list = New System.Windows.Forms.ListView()
         Me.ctr_tree = New System.Windows.Forms.TreeView()
         Me.SuspendLayout()
@@ -51,6 +52,7 @@ Partial Class frmPropertyBrowser
         Me.ClientSize = New System.Drawing.Size(937, 570)
         Me.Controls.Add(Me.ctr_list)
         Me.Controls.Add(Me.ctr_tree)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "frmPropertyBrowser"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen
         Me.Text = "Property Browser"

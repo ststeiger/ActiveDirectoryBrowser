@@ -84,7 +84,7 @@ namespace PropertyBrowser
         }
 
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnSearchUser_Click(object sender, EventArgs e)
         {
             System.Windows.Forms.Form myfrm = new frmSearchUser(this.txtDomain.Text);
             myfrm.Show();

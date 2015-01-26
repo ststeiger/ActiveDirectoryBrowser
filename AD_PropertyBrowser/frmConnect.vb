@@ -62,4 +62,10 @@ Public Class frmConnect
     End Sub ' cbIntegratedSecurity_CheckedChanged
 
 
+    Private Sub btnSearchUser_Click(sender As Object, e As EventArgs) Handles btnSearchUser.Click
+        Dim myfrm As System.Windows.Forms.Form = New frmSearchUser(Me.txtDomain.Text)
+        myfrm.Show()
+    End Sub
+
+
 End Class ' frmConnect

@@ -70,6 +70,9 @@
   <PropertyGroup>
     <OptionInfer>Off</OptionInfer>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Icons\ActiveDirectory.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -102,6 +105,13 @@
     <Compile Include="frmPropertyBrowser.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="frmSearchUser.Designer.vb">
+      <DependentUpon>frmSearchUser.vb</DependentUpon>
+    </Compile>
+    <Compile Include="frmSearchUser.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="LdapTools.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -124,6 +134,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmPropertyBrowser.resx">
       <DependentUpon>frmPropertyBrowser.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmSearchUser.resx">
+      <DependentUpon>frmSearchUser.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -160,10 +173,16 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="ActiveDirectory.ico" />
+    <Content Include="Icons\1321.RBAC_1.png" />
+    <Content Include="Icons\ActiveDirectory.ico" />
+    <Content Include="Icons\adicon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <ProjectExtensions>
     <VisualStudio>
-      <UserProperties BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.TimeStamp" BuildVersion_UpdateFileVersion="True" BuildVersion_UpdateAssemblyVersion="True" />
+      <UserProperties BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" BuildVersion_BuildVersioningStyle="YearStamp.MonthStamp.DayStamp.TimeStamp" />
     </VisualStudio>
   </ProjectExtensions>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

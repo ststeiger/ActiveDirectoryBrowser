@@ -22,6 +22,7 @@ Partial Class frmConnect
     'Das Bearbeiten mit dem Code-Editor ist nicht möglich.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmConnect))
         Me.cbIntegratedSecurity = New System.Windows.Forms.CheckBox()
         Me.txtDomain = New System.Windows.Forms.TextBox()
         Me.lblDomain = New System.Windows.Forms.Label()
@@ -30,6 +31,7 @@ Partial Class frmConnect
         Me.txtUsername = New System.Windows.Forms.TextBox()
         Me.lblPassword = New System.Windows.Forms.Label()
         Me.lblUsername = New System.Windows.Forms.Label()
+        Me.btnSearchUser = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'cbIntegratedSecurity
@@ -106,11 +108,21 @@ Partial Class frmConnect
         Me.lblUsername.Text = "Benutzername:"
         Me.lblUsername.TextAlign = System.Drawing.ContentAlignment.MiddleRight
         '
+        'btnSearchUser
+        '
+        Me.btnSearchUser.ImeMode = System.Windows.Forms.ImeMode.NoControl
+        Me.btnSearchUser.Location = New System.Drawing.Point(204, 112)
+        Me.btnSearchUser.Name = "btnSearchUser"
+        Me.btnSearchUser.Size = New System.Drawing.Size(75, 23)
+        Me.btnSearchUser.TabIndex = 25
+        Me.btnSearchUser.Text = "&Search User"
+        '
         'frmConnect
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(371, 147)
+        Me.Controls.Add(Me.btnSearchUser)
         Me.Controls.Add(Me.cbIntegratedSecurity)
         Me.Controls.Add(Me.txtDomain)
         Me.Controls.Add(Me.lblDomain)
@@ -119,6 +131,7 @@ Partial Class frmConnect
         Me.Controls.Add(Me.txtUsername)
         Me.Controls.Add(Me.lblPassword)
         Me.Controls.Add(Me.lblUsername)
+        Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.Name = "frmConnect"
         Me.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
         Me.Text = "Verbinden"
@@ -134,4 +147,5 @@ Partial Class frmConnect
     Private WithEvents txtUsername As System.Windows.Forms.TextBox
     Private WithEvents lblPassword As System.Windows.Forms.Label
     Private WithEvents lblUsername As System.Windows.Forms.Label
+    Private WithEvents btnSearchUser As System.Windows.Forms.Button
 End Class

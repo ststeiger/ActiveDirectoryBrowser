@@ -37,7 +37,7 @@
             this.txtUsername = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.lblUser = new System.Windows.Forms.Label();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnSearchUser = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // cbIntegratedSecurity
@@ -116,22 +116,22 @@
             this.lblUser.Text = "Username:";
             this.lblUser.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // button1
+            // btnSearchUser
             // 
-            this.button1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.button1.Location = new System.Drawing.Point(196, 114);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 24;
-            this.button1.Text = "&Search User";
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnSearchUser.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.btnSearchUser.Location = new System.Drawing.Point(196, 114);
+            this.btnSearchUser.Name = "btnSearchUser";
+            this.btnSearchUser.Size = new System.Drawing.Size(75, 23);
+            this.btnSearchUser.TabIndex = 24;
+            this.btnSearchUser.Text = "&Search User";
+            this.btnSearchUser.Click += new System.EventHandler(this.btnSearchUser_Click);
             // 
             // frmConnect
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(371, 153);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnSearchUser);
             this.Controls.Add(this.cbIntegratedSecurity);
             this.Controls.Add(this.txtDomain);
             this.Controls.Add(this.lblDomain);
@@ -160,6 +160,6 @@
         private System.Windows.Forms.TextBox txtUsername;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.Label lblUser;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnSearchUser;
     }
 }
