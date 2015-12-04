@@ -167,10 +167,10 @@
 
 
     Private Sub btnAuth_Click(sender As Object, e As EventArgs) Handles btnAuth.Click
-        '    Dim usr As String = Me.txtUserName.Text
-        '    Dim password As String = Me.txtPassword.Text
+        Dim usr As String = Me.txtUserName.Text
+        Dim password As String = Me.txtPassword.Text
 
-        '    MsgBox(LdapTools.IsAuthenticated(Me.m_RootDn, usr, password))
+        MsgBox(LdapTools.IsAuthenticated(Me.m_RootDn, usr, password))
     End Sub ' btnAuth_Click 
 
 

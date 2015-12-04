@@ -112,8 +112,12 @@ Public Class frmPropertyBrowser
 
     Private Sub frmPropertyBrowser_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
         Dim ConnectionData As New frmConnect(Me)
-        ConnectionData.ShowDialog()
-        Connect()
+        Dim dres As System.Windows.Forms.DialogResult = ConnectionData.ShowDialog()
+
+        If dres = Windows.Forms.DialogResult.OK Then
+            Connect()
+        End If
+
     End Sub ' frmPropertyBrowser_Load
 
 

@@ -49,6 +49,9 @@ Public Class frmConnect
         par.strUserName = Me.txtUsername.Text
         par.strPassword = Me.txtPassword.Text
 
+
+        Me.DialogResult = DialogResult.OK
+
         Me.Close()
     End Sub ' btnConnect_Click
 

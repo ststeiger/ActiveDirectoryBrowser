@@ -148,8 +148,10 @@ namespace PropertyBrowser
         private void frmPropertyBrowser_Load(object sender, EventArgs e)
         {
             frmConnect ConnectionData = new frmConnect(this);
-            ConnectionData.ShowDialog();
-            Connect();
+            System.Windows.Forms.DialogResult dres = ConnectionData.ShowDialog();
+
+            if(dres == System.Windows.Forms.DialogResult.OK)
+                Connect();
         }
 
 

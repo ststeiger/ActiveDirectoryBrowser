@@ -70,6 +70,7 @@ namespace PropertyBrowser
             par.strUserName = this.txtUsername.Text;
             par.strPassword = this.txtPassword.Text;
 
+            this.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.Close();
         } // End Sub btnConnect_Click
 
