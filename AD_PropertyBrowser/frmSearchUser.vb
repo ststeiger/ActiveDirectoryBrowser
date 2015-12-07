@@ -23,6 +23,29 @@
     End Sub
 
 
+    ' http://social.technet.microsoft.com/wiki/contents/articles/5312.active-directory-characters-to-escape.aspx
+    ' Active Directory
+    ' The space character must be escaped only if it is the leading or trailing character in any component of a distinguished name.
+    'Comma	,
+    'Backslash character	\
+    'Pound sign (hash sign)	#
+    'Plus sign	+
+    'Less than symbol	<
+    'Greater than symbol	>
+    'Semicolon	;
+    'Double quote (quotation mark)	"
+    'Equal sign	=
+
+    ' The LDAP filter specification assigns special meaning to the following characters:
+    ' * ( ) \ NUL
+
+    ' Character	Hex Representation
+    ' *	    \2A
+    ' (	    \28
+    ' )	    \29
+    ' \	    \5C
+    ' Nul	\00
+
 
     Private Function GetUserList(strUserName As String) As System.Data.DataTable
         Dim dt As System.Data.DataTable = New DataTable()
@@ -56,7 +79,12 @@
                 'UserAccountControl will only Include Non-Disabled Users.
                 'search.Filter = "(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2)(samAccountName=stefan.steiger))";
 
-                search.Filter = String.Format("(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2){0})", strUserCondition)
+
+                'strFilter = "(&(objectCategory=person)(objectClass=user))"
+
+                'search.Filter = String.Format("(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2){0})", strUserCondition)
+                'search.Filter = String.Format("(&(objectClass=user){0})", strUserCondition)
+                search.Filter = String.Format("(&{0})", strUserCondition)
 
                 Using result As System.DirectoryServices.SearchResultCollection = search.FindAll()
 
