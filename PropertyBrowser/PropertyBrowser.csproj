@@ -87,6 +87,7 @@
       <DependentUpon>frmSearchUser.cs</DependentUpon>
     </Compile>
     <Compile Include="LdapTools.cs" />
+    <Compile Include="DomainPolicy.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="frmConnect.resx">

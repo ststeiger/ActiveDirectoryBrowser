@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
+﻿
 using System.Windows.Forms;
-
-
-using System.DirectoryServices;
 
 
 namespace PropertyBrowser
@@ -32,12 +24,12 @@ namespace PropertyBrowser
 
 
 
-        private void btnSearch_Click(object sender, EventArgs e)
+        private void btnSearch_Click(object sender, System.EventArgs e)
         {
             string strUserName = this.txtUserName.Text;
             this.dgvDisplayData.DataSource = GetUserList(strUserName).DefaultView;
 
-            this.dgvDisplayData.Sort(this.dgvDisplayData.Columns[this.dgvDisplayData.Columns[0].Name], ListSortDirection.Ascending);
+            this.dgvDisplayData.Sort(this.dgvDisplayData.Columns[this.dgvDisplayData.Columns[0].Name], System.ComponentModel.ListSortDirection.Ascending);
         } // End Sub btnSearch_Click 
 
 
@@ -49,7 +41,7 @@ namespace PropertyBrowser
 
         private System.Data.DataTable GetUserList(string strUserName)
         {
-            System.Data.DataTable dt = new DataTable();
+            System.Data.DataTable dt = new System.Data.DataTable();
 
             dt.Columns.Add("sAMAccountName", typeof(string));
             dt.Columns.Add("DistinguishedName", typeof(string));
@@ -64,11 +56,11 @@ namespace PropertyBrowser
             dt.Columns.Add("memberof", typeof(string));
 
 
-            //using (DirectoryEntry rootDSE = new DirectoryEntry("LDAP://DC=cor,DC=local", username, password))
-            using (DirectoryEntry rootDSE = LdapTools.GetDE(m_RootDn))
+            //using (System.DirectoryServices.DirectoryEntry rootDSE = new System.DirectoryServices.DirectoryEntry("LDAP://DC=cor,DC=local", username, password))
+            using (System.DirectoryServices.DirectoryEntry rootDSE = LdapTools.GetDE(m_RootDn))
             {
 
-                using (DirectorySearcher search = new DirectorySearcher(rootDSE))
+                using (System.DirectoryServices.DirectorySearcher search = new System.DirectoryServices.DirectorySearcher(rootDSE))
                 {
                     search.PageSize = 1001;// To Pull up more than 100 records.
 
@@ -82,11 +74,11 @@ namespace PropertyBrowser
                     //search.Filter = "(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2)(samAccountName=stefan.steiger))";
                     
                     search.Filter = string.Format("(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2){0})", strUserCondition);
-                    
-                    using (SearchResultCollection result = search.FindAll())
+
+                    using (System.DirectoryServices.SearchResultCollection result = search.FindAll())
                     {
 
-                        foreach (SearchResult item in result)
+                        foreach (System.DirectoryServices.SearchResult item in result)
                         {
                             string sAMAccountName = null;
                             string DistinguishedName = null;
@@ -105,12 +97,10 @@ namespace PropertyBrowser
                                 sAMAccountName = item.Properties["sAMAccountName"][0].ToString();
                             }
 
-
                             if (item.Properties["distinguishedName"].Count > 0)
                             {
                                 DistinguishedName = item.Properties["distinguishedName"][0].ToString();
                             }
-
 
                             if (item.Properties["cn"].Count > 0)
                             {
@@ -122,23 +112,26 @@ namespace PropertyBrowser
                                 DisplayName = item.Properties["DisplayName"][0].ToString();
                             }
 
-
                             if (item.Properties["mail"].Count > 0)
                             {
                                 EmailAddress = item.Properties["mail"][0].ToString();
                             }
+
                             if (item.Properties["SamAccountName"].Count > 0)
                             {
                                 DomainName = item.Properties["SamAccountName"][0].ToString();
                             }
+
                             if (item.Properties["department"].Count > 0)
                             {
                                 Department = item.Properties["department"][0].ToString();
                             }
+
                             if (item.Properties["title"].Count > 0)
                             {
                                 title = item.Properties["title"][0].ToString();
                             }
+
                             if (item.Properties["company"].Count > 0)
                             {
                                 company = item.Properties["company"][0].ToString();
@@ -201,7 +194,7 @@ namespace PropertyBrowser
 
 
 
-        private void btnAuth_Click(object sender, EventArgs e)
+        private void btnAuth_Click(object sender, System.EventArgs e)
         {
             string usr = this.txtUserName.Text;
             string password = this.txtPassword.Text;

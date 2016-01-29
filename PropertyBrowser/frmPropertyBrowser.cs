@@ -1,14 +1,5 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
-
-
-using System.DirectoryServices;
 
 
 namespace PropertyBrowser
@@ -31,20 +22,20 @@ namespace PropertyBrowser
 
         public void Connect()
         {
-            DirectoryEntry Base;
+            System.DirectoryServices.DirectoryEntry Base;
 
-            if (!strRootDSE.StartsWith("LDAP://", StringComparison.OrdinalIgnoreCase))
+            if (!strRootDSE.StartsWith("LDAP://", System.StringComparison.OrdinalIgnoreCase))
             {
                 strRootDSE = "LDAP://" + strRootDSE;
             } // End if (!strRootDSE.StartsWith("LDAP://", StringComparison.OrdinalIgnoreCase))
 
             if (bIntegratedSecurity)
             {
-                Base = new DirectoryEntry(strRootDSE);
+                Base = new System.DirectoryServices.DirectoryEntry(strRootDSE);
             } // End if (bIntegratedSecurity)
             else
             {
-                Base = new DirectoryEntry(strRootDSE, strUserName, strPassword);
+                Base = new System.DirectoryServices.DirectoryEntry(strRootDSE, strUserName, strPassword);
             } // End else of if (bIntegratedSecurity)
 
 
@@ -63,13 +54,13 @@ namespace PropertyBrowser
                     childNode.Tag = Base;
 
 
-                    foreach (DirectoryEntry rootIter in Base.Children)
+                    foreach (System.DirectoryServices.DirectoryEntry rootIter in Base.Children)
                     {
                         TreeNode RootNode = childNode.Nodes.Add(rootIter.Name);
                         RootNode.Tag = rootIter;
                     } // Next rootIter
                 }
-                catch (Exception ex)
+                catch (System.Exception ex)
                 {
                     MessageBox.Show(ex.Message);
                 }
@@ -89,7 +80,7 @@ namespace PropertyBrowser
             //Fill the TreeView dynamic after Click
             if (e.Node.Nodes.Count == 0)
             {
-                DirectoryEntry parent = (DirectoryEntry)e.Node.Tag;
+                System.DirectoryServices.DirectoryEntry parent = (System.DirectoryServices.DirectoryEntry)e.Node.Tag;
 
                 if (parent != null)
                 {
@@ -97,7 +88,7 @@ namespace PropertyBrowser
                     if (parent.Children != null)
                     {
 
-                        foreach (DirectoryEntry Iter in parent.Children)
+                        foreach (System.DirectoryServices.DirectoryEntry Iter in parent.Children)
                         {
                             TreeNode childNode = e.Node.Nodes.Add(Iter.Name);
                             childNode.Tag = Iter;
@@ -113,7 +104,7 @@ namespace PropertyBrowser
             //Fill the ListView Element
             try
             {
-                DirectoryEntry list = (DirectoryEntry)e.Node.Tag;
+                System.DirectoryServices.DirectoryEntry list = (System.DirectoryServices.DirectoryEntry)e.Node.Tag;
                 if (list != null)
                 {
 
@@ -125,10 +116,75 @@ namespace PropertyBrowser
 
                     foreach (object listIter in list.Properties.PropertyNames)
                     {
-                        foreach (Object Iter in list.Properties[listIter.ToString()])
+                        foreach (object Iter in list.Properties[listIter.ToString()])
                         {
-                            System.Windows.Forms.ListViewItem item = new System.Windows.Forms.ListViewItem(listIter.ToString(), 0);
-                            item.SubItems.Add(Iter.ToString());
+                            string propertyName = listIter.ToString();
+                            System.Windows.Forms.ListViewItem item = new System.Windows.Forms.ListViewItem(propertyName, 0);
+
+                            // lastLogon	        System.__ComObject
+                            // lastLogoff	        System.__ComObject
+                            // lastLogonTimestamp	System.__ComObject
+
+                            // accountExpires	System.__ComObject
+                            // badPasswordTime	System.__ComObject
+                            // pwdLastSet	    System.__ComObject
+                            // lockoutTime	    System.__ComObject
+                            // uSNCreated	    System.__ComObject
+                            // uSNChanged	    System.__ComObject
+
+                            if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogon")
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogoff")
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogonTimestamp")
+
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "pwdLastSet")
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "badPasswordTime")
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lockoutTime")
+
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNCreated")
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNChanged")
+
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "accountExpires")
+
+                                )
+                            {
+                                // http://social.technet.microsoft.com/wiki/contents/articles/22461.understanding-the-ad-account-attributes-lastlogon-lastlogontimestamp-and-lastlogondate.aspx
+                                // http://stackoverflow.com/questions/1602036/how-to-list-all-computers-and-the-last-time-they-were-logged-onto-in-ad
+                                // http://stackoverflow.com/questions/33274162/the-namespace-of-iadslargeinteger
+                                // Active DS Type Library
+
+                                // System.Console.WriteLine(Iter);
+                                // System.Console.WriteLine(str);
+                                try
+                                {
+                                    // ActiveDs.IADsLargeInteger ISomeAdTime = (ActiveDs.IADsLargeInteger)Iter;
+                                    // long lngSomeAdTime = (long)ISomeAdTime.HighPart << 32 | (uint)ISomeAdTime.LowPart;
+
+                                    long lngSomeAdTime = ConvertLargeIntegerToLong(Iter);
+
+                                    System.DateTime someAdTime = System.DateTime.MaxValue;
+
+                                    if (lngSomeAdTime == long.MaxValue || lngSomeAdTime <= 0 || System.DateTime.MaxValue.ToFileTime() <= lngSomeAdTime)
+                                    {
+                                        someAdTime = System.DateTime.MaxValue;
+                                    }
+                                    else
+                                    {
+                                        // someAdTime = System.DateTime.FromFileTime(lngSomeAdTime);
+                                        someAdTime = System.DateTime.FromFileTimeUtc(lngSomeAdTime).ToLocalTime();
+                                    }
+
+                                    item.SubItems.Add(someAdTime.ToString("dd.MM.yyyy HH:mm:ss"));
+                                }
+                                catch (System.Exception ex)
+                                {
+                                    item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
+                                }
+                            }
+                            else
+                            {
+                                item.SubItems.Add(Iter.ToString());
+                            }
+
                             ctr_list.Items.AddRange(new ListViewItem[] { item });
                         } // Next Iter
 
@@ -145,7 +201,18 @@ namespace PropertyBrowser
         } // End Sub ctr_tree_AfterSelect
 
 
-        private void frmPropertyBrowser_Load(object sender, EventArgs e)
+        private static long ConvertLargeIntegerToLong(object largeInteger)
+        {
+            System.Type t = largeInteger.GetType();
+
+            int highPart = (int)t.InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, null, largeInteger, null);
+            int lowPart = (int)t.InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty | System.Reflection.BindingFlags.Public, null, largeInteger, null);
+
+            return (long)highPart << 32 | (uint)lowPart;
+        }
+
+
+        private void frmPropertyBrowser_Load(object sender, System.EventArgs e)
         {
             frmConnect ConnectionData = new frmConnect(this);
             System.Windows.Forms.DialogResult dres = ConnectionData.ShowDialog();
@@ -196,7 +263,7 @@ namespace PropertyBrowser
                 // string attr = ThisItem.SubItems["Attribute"].Text;
                 // string val = ThisItem.SubItems["Value"].Text;
 
-                str += string.Format("{0}\t{1}" + Environment.NewLine, ThisItem.SubItems[0].Text, ThisItem.SubItems[1].Text);
+                str += string.Format("{0}\t{1}" + System.Environment.NewLine, ThisItem.SubItems[0].Text, ThisItem.SubItems[1].Text);
             } // Next ThisItem
 
             System.Windows.Forms.Clipboard.SetText(str);

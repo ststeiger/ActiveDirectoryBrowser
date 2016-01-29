@@ -1,9 +1,4 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Windows.Forms;
-
-
 namespace PropertyBrowser
 {
 
@@ -15,15 +10,15 @@ namespace PropertyBrowser
         /// <summary>
         /// Der Haupteinstiegspunkt für die Anwendung.
         /// </summary>
-        [STAThread]
+        [System.STAThread]
         static void Main()
         {
 
             if (true)
             {
-                Application.EnableVisualStyles();
-                Application.SetCompatibleTextRenderingDefault(false);
-                Application.Run(new frmPropertyBrowser());
+                System.Windows.Forms.Application.EnableVisualStyles();
+                System.Windows.Forms.Application.SetCompatibleTextRenderingDefault(false);
+                System.Windows.Forms.Application.Run(new frmPropertyBrowser());
             }
 
         } // End Sub Main
