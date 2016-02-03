@@ -75,6 +75,20 @@ namespace PropertyBrowser
         } // End Sub Connect
 
 
+
+        //[System.Runtime.InteropServices.ComImport]
+        //[System.Runtime.InteropServices.Guid("9068270b-0939-11d1-8be1-00c04fd8d503")]
+        //[System.Runtime.InteropServices.InterfaceType(System.Runtime.InteropServices.ComInterfaceType.InterfaceIsDual)]
+        //public interface IADsLargeInteger
+        //{
+        //    [System.Runtime.InteropServices.DispId(0x00000002)]
+        //    uint HighPart { get; set; }
+
+        //    [System.Runtime.InteropServices.DispId(0x00000003)]
+        //    uint LowPart { get; set; }
+        //}
+
+
         private void ctr_tree_AfterSelect(object sender, TreeViewEventArgs e)
         {
             //Fill the TreeView dynamic after Click
@@ -182,6 +196,9 @@ namespace PropertyBrowser
                                     // ActiveDs.IADsLargeInteger ISomeAdTime = (ActiveDs.IADsLargeInteger)Iter;
                                     // long lngSomeAdTime = (long)ISomeAdTime.HighPart << 32 | (uint)ISomeAdTime.LowPart;
 
+                                    // IADsLargeInteger noActiveDsSomeTime = (IADsLargeInteger)Iter;
+                                    // System.Console.WriteLine(noActiveDsSomeTime);
+
                                     long lngSomeAdTime = ConvertLargeIntegerToLong(Iter);
 
                                     System.DateTime someAdTime = System.DateTime.MaxValue;
@@ -216,7 +233,6 @@ namespace PropertyBrowser
                                 System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier((byte[])Iter, 0);
                                 item.SubItems.Add(sid.ToString());
                             }
-
                             else if (
                                 System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectGUID")
                                 || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchMailboxGuid")
