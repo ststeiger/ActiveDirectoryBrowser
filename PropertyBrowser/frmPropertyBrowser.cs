@@ -132,6 +132,12 @@ namespace PropertyBrowser
                             // uSNCreated	    System.__ComObject
                             // uSNChanged	    System.__ComObject
 
+
+                            // msExchMailboxGuid	            System.Byte[]
+                            // msExchVersion	                System.__ComObject
+                            // msExchMailboxSecurityDescriptor	System.__ComObject
+                            // nTSecurityDescriptor	            System.__ComObject
+
                             if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogon")
                                 || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogoff")
                                 || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogonTimestamp")
@@ -156,6 +162,23 @@ namespace PropertyBrowser
                                 // System.Console.WriteLine(str);
                                 try
                                 {
+
+                                    // SecurityDescriptor sd = (SecurityDescriptor)ent.Properties["ntSecurityDescriptor"].Value;
+                                    // ActiveDs.SecurityDescriptor sd = (ActiveDs.SecurityDescriptor)Iter;
+                                    
+                                    // sd.DiscretionaryAcl
+                                    // ActiveDs.AccessControlList acl = (ActiveDs.AccessControlList)sd.DiscretionaryAcl;
+
+
+                                    //foreach (ActiveDs.AccessControlEntry ace in (System.Collections.IEnumerable)acl)
+                                    //{
+                                    //    System.Console.WriteLine("Trustee: {0}", ace.Trustee);
+                                    //    System.Console.WriteLine("AccessMask: {0}", ace.AccessMask);
+                                    //    System.Console.WriteLine("Access Type: {0}", ace.AceType);
+                                    //}
+
+
+
                                     // ActiveDs.IADsLargeInteger ISomeAdTime = (ActiveDs.IADsLargeInteger)Iter;
                                     // long lngSomeAdTime = (long)ISomeAdTime.HighPart << 32 | (uint)ISomeAdTime.LowPart;
 
@@ -179,6 +202,28 @@ namespace PropertyBrowser
                                 {
                                     item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
                                 }
+                            }
+                            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "userCertificate")
+                                // || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQSignCertificates")
+                                // || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQDigest")
+                                )
+                            {
+                                System.Security.Cryptography.X509Certificates.X509Certificate cert = new System.Security.Cryptography.X509Certificates.X509Certificate((byte[])Iter);
+                                item.SubItems.Add(cert.ToString());
+                            }
+                            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectSid"))
+                            {
+                                System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier((byte[])Iter, 0);
+                                item.SubItems.Add(sid.ToString());
+                            }
+
+                            else if (
+                                System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectGUID")
+                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchMailboxGuid")
+                                )
+                            {
+                                System.Guid guid = new System.Guid((byte[])Iter);
+                                item.SubItems.Add(guid.ToString());
                             }
                             else
                             {
