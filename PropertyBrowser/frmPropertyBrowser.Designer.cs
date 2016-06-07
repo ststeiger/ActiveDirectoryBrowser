@@ -42,6 +42,7 @@
             this.ctr_list.TabIndex = 6;
             this.ctr_list.UseCompatibleStateImageBehavior = false;
             this.ctr_list.View = System.Windows.Forms.View.Details;
+            this.ctr_list.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.ctr_list_ColumnClick);
             this.ctr_list.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ctr_list_KeyDown);
             this.ctr_list.MouseClick += new System.Windows.Forms.MouseEventHandler(this.ctr_list_MouseClick);
             // 

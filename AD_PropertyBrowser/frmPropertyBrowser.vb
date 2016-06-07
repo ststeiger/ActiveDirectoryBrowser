@@ -95,19 +95,124 @@ Public Class frmPropertyBrowser
                 ctr_list.Columns.Add("Value", 350, HorizontalAlignment.Left)
 
                 For Each listIter As Object In list.Properties.PropertyNames
-                    For Each Iter As [Object] In list.Properties(listIter.ToString())
+                    For Each Iter As Object In list.Properties(listIter.ToString())
+                        Dim propertyName As String = listIter.ToString()
                         Dim item As New System.Windows.Forms.ListViewItem(listIter.ToString(), 0)
-                        item.SubItems.Add(Iter.ToString())
-
+                        AddLdapObjectAsString(propertyName, Iter, item)
                         ctr_list.Items.AddRange(New ListViewItem() {item})
                     Next Iter
                 Next listIter
+
+
+                ctr_list.ListViewItemSorter = Me.m_ColumnSorter
+                ctr_list.Sorting = SortOrder.Ascending
+                ctr_list.Sort()
             End If ' list IsNot Nothing 
         Catch ex As System.Exception
             MessageBox.Show(ex.Message)
         End Try
 
     End Sub ' ctr_tree_AfterSelect
+
+
+
+    Public Shared Sub AddLdapObjectAsString(propertyName As String, Iter As Object, item As System.Windows.Forms.ListViewItem)
+
+        ' lastLogon	        System.__ComObject
+        ' lastLogoff	        System.__ComObject
+        ' lastLogonTimestamp	System.__ComObject
+
+        ' accountExpires	System.__ComObject
+        ' badPasswordTime	System.__ComObject
+        ' pwdLastSet	    System.__ComObject
+        ' lockoutTime	    System.__ComObject
+        ' uSNCreated	    System.__ComObject
+        ' uSNChanged	    System.__ComObject
+
+
+        ' msExchMailboxGuid	            System.Byte[]
+        ' msExchVersion	                System.__ComObject
+        ' msExchMailboxSecurityDescriptor	System.__ComObject
+        ' nTSecurityDescriptor	            System.__ComObject
+
+
+
+
+        If System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogon") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogoff") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogonTimestamp") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "pwdLastSet") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "badPasswordTime") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lockoutTime") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNCreated") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNChanged") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "accountExpires") Then
+
+            ' http://social.technet.microsoft.com/wiki/contents/articles/22461.understanding-the-ad-account-attributes-lastlogon-lastlogontimestamp-and-lastlogondate.aspx
+            ' http://stackoverflow.com/questions/1602036/how-to-list-all-computers-and-the-last-time-they-were-logged-onto-in-ad
+            ' http://stackoverflow.com/questions/33274162/the-namespace-of-iadslargeinteger
+            ' Active DS Type Library
+
+            ' System.Console.WriteLine(Iter);
+            ' System.Console.WriteLine(str);
+            Try
+
+                ' SecurityDescriptor sd = (SecurityDescriptor)ent.Properties["ntSecurityDescriptor"].Value;
+                ' ActiveDs.SecurityDescriptor sd = (ActiveDs.SecurityDescriptor)Iter;
+
+                ' sd.DiscretionaryAcl
+                ' ActiveDs.AccessControlList acl = (ActiveDs.AccessControlList)sd.DiscretionaryAcl;
+
+
+                'foreach (ActiveDs.AccessControlEntry ace in (System.Collections.IEnumerable)acl)
+                '{
+                '    System.Console.WriteLine("Trustee: {0}", ace.Trustee);
+                '    System.Console.WriteLine("AccessMask: {0}", ace.AccessMask);
+                '    System.Console.WriteLine("Access Type: {0}", ace.AceType);
+                '}
+
+
+
+                ' ActiveDs.IADsLargeInteger ISomeAdTime = (ActiveDs.IADsLargeInteger)Iter;
+                ' long lngSomeAdTime = (long)ISomeAdTime.HighPart << 32 | (uint)ISomeAdTime.LowPart;
+
+                ' IADsLargeInteger noActiveDsSomeTime = (IADsLargeInteger)Iter;
+                ' System.Console.WriteLine(noActiveDsSomeTime);
+
+                Dim lngSomeAdTime As Long = ConvertLargeIntegerToLong(Iter)
+
+                Dim someAdTime As System.DateTime = System.DateTime.MaxValue
+
+                If lngSomeAdTime = Long.MaxValue OrElse lngSomeAdTime <= 0 OrElse System.DateTime.MaxValue.ToFileTime() <= lngSomeAdTime Then
+                    someAdTime = System.DateTime.MaxValue
+                Else
+                    ' someAdTime = System.DateTime.FromFileTime(lngSomeAdTime);
+                    someAdTime = System.DateTime.FromFileTimeUtc(lngSomeAdTime).ToLocalTime()
+                End If
+
+                item.SubItems.Add(someAdTime.ToString("dd.MM.yyyy HH:mm:ss"))
+            Catch ex As System.Exception
+                item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString())
+            End Try
+        ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "userCertificate") Then
+            ' || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQSignCertificates")
+            ' || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQDigest")
+            Dim cert As New System.Security.Cryptography.X509Certificates.X509Certificate(DirectCast(Iter, Byte()))
+            item.SubItems.Add(cert.ToString())
+        ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectSid") Then
+            Dim sid As New System.Security.Principal.SecurityIdentifier(DirectCast(Iter, Byte()), 0)
+            item.SubItems.Add(sid.ToString())
+        ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectGUID") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchMailboxGuid") Then
+            Dim guid As New System.Guid(DirectCast(Iter, Byte()))
+            item.SubItems.Add(guid.ToString())
+        Else
+            item.SubItems.Add(Iter.ToString())
+        End If
+
+    End Sub ' AddLdapObjectAsString 
+
+
+    Private Shared Function ConvertLargeIntegerToLong(largeInteger As Object) As Long
+        Dim t As System.Type = largeInteger.[GetType]()
+
+        Dim highPart As Integer = CInt(t.InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, Nothing, largeInteger, Nothing))
+        Dim lowPart As Integer = CInt(t.InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty Or System.Reflection.BindingFlags.[Public], Nothing, largeInteger, Nothing))
+
+        Return CLng(highPart) << 32 Or CUInt(lowPart)
+    End Function ' ConvertLargeIntegerToLong
+
 
 
     Private Sub frmPropertyBrowser_Load(sender As System.Object, e As System.EventArgs) Handles MyBase.Load
@@ -179,6 +284,40 @@ Public Class frmPropertyBrowser
             e.Handled = True
         End If
     End Sub ' ctr_list_KeyDown 
+
+
+
+    Private Shared Function SetupColumnSorter() As ListViewColumnSorter
+        Dim lcs As New ListViewColumnSorter()
+        lcs.Order = SortOrder.Ascending
+
+        Return lcs
+    End Function
+
+
+    Private m_ColumnSorter As ListViewColumnSorter = SetupColumnSorter()
+
+
+    Private Sub ctr_list_ColumnClick(sender As Object, e As ColumnClickEventArgs) Handles ctr_list.ColumnClick
+        Dim lvSender As ListView = DirectCast(sender, ListView)
+
+        ' Determine if clicked column is already the column that is being sorted.
+        If e.Column = Me.m_ColumnSorter.SortColumn Then
+            ' Reverse the current sort direction for this column.
+            If Me.m_ColumnSorter.Order = SortOrder.Ascending Then
+                Me.m_ColumnSorter.Order = SortOrder.Descending
+            Else
+                Me.m_ColumnSorter.Order = SortOrder.Ascending
+            End If
+        Else
+            ' Set the column number that is to be sorted; default to ascending.
+            Me.m_ColumnSorter.SortColumn = e.Column
+            Me.m_ColumnSorter.Order = SortOrder.Ascending
+        End If
+
+        ' Perform the sort with these new sort options.
+        lvSender.Sort()
+    End Sub ' ctr_list_ColumnClick 
 
 
 End Class ' frmPropertyBrowser

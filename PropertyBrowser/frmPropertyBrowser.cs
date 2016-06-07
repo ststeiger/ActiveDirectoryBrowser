@@ -134,122 +134,15 @@ namespace PropertyBrowser
                         {
                             string propertyName = listIter.ToString();
                             System.Windows.Forms.ListViewItem item = new System.Windows.Forms.ListViewItem(propertyName, 0);
-
-                            // lastLogon	        System.__ComObject
-                            // lastLogoff	        System.__ComObject
-                            // lastLogonTimestamp	System.__ComObject
-
-                            // accountExpires	System.__ComObject
-                            // badPasswordTime	System.__ComObject
-                            // pwdLastSet	    System.__ComObject
-                            // lockoutTime	    System.__ComObject
-                            // uSNCreated	    System.__ComObject
-                            // uSNChanged	    System.__ComObject
-
-
-                            // msExchMailboxGuid	            System.Byte[]
-                            // msExchVersion	                System.__ComObject
-                            // msExchMailboxSecurityDescriptor	System.__ComObject
-                            // nTSecurityDescriptor	            System.__ComObject
-
-                            if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogon")
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogoff")
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogonTimestamp")
-
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "pwdLastSet")
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "badPasswordTime")
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lockoutTime")
-
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNCreated")
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNChanged")
-
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "accountExpires")
-
-                                )
-                            {
-                                // http://social.technet.microsoft.com/wiki/contents/articles/22461.understanding-the-ad-account-attributes-lastlogon-lastlogontimestamp-and-lastlogondate.aspx
-                                // http://stackoverflow.com/questions/1602036/how-to-list-all-computers-and-the-last-time-they-were-logged-onto-in-ad
-                                // http://stackoverflow.com/questions/33274162/the-namespace-of-iadslargeinteger
-                                // Active DS Type Library
-
-                                // System.Console.WriteLine(Iter);
-                                // System.Console.WriteLine(str);
-                                try
-                                {
-
-                                    // SecurityDescriptor sd = (SecurityDescriptor)ent.Properties["ntSecurityDescriptor"].Value;
-                                    // ActiveDs.SecurityDescriptor sd = (ActiveDs.SecurityDescriptor)Iter;
-                                    
-                                    // sd.DiscretionaryAcl
-                                    // ActiveDs.AccessControlList acl = (ActiveDs.AccessControlList)sd.DiscretionaryAcl;
-
-
-                                    //foreach (ActiveDs.AccessControlEntry ace in (System.Collections.IEnumerable)acl)
-                                    //{
-                                    //    System.Console.WriteLine("Trustee: {0}", ace.Trustee);
-                                    //    System.Console.WriteLine("AccessMask: {0}", ace.AccessMask);
-                                    //    System.Console.WriteLine("Access Type: {0}", ace.AceType);
-                                    //}
-
-
-
-                                    // ActiveDs.IADsLargeInteger ISomeAdTime = (ActiveDs.IADsLargeInteger)Iter;
-                                    // long lngSomeAdTime = (long)ISomeAdTime.HighPart << 32 | (uint)ISomeAdTime.LowPart;
-
-                                    // IADsLargeInteger noActiveDsSomeTime = (IADsLargeInteger)Iter;
-                                    // System.Console.WriteLine(noActiveDsSomeTime);
-
-                                    long lngSomeAdTime = ConvertLargeIntegerToLong(Iter);
-
-                                    System.DateTime someAdTime = System.DateTime.MaxValue;
-
-                                    if (lngSomeAdTime == long.MaxValue || lngSomeAdTime <= 0 || System.DateTime.MaxValue.ToFileTime() <= lngSomeAdTime)
-                                    {
-                                        someAdTime = System.DateTime.MaxValue;
-                                    }
-                                    else
-                                    {
-                                        // someAdTime = System.DateTime.FromFileTime(lngSomeAdTime);
-                                        someAdTime = System.DateTime.FromFileTimeUtc(lngSomeAdTime).ToLocalTime();
-                                    }
-
-                                    item.SubItems.Add(someAdTime.ToString("dd.MM.yyyy HH:mm:ss"));
-                                }
-                                catch (System.Exception ex)
-                                {
-                                    item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
-                                }
-                            }
-                            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "userCertificate")
-                                // || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQSignCertificates")
-                                // || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQDigest")
-                                )
-                            {
-                                System.Security.Cryptography.X509Certificates.X509Certificate cert = new System.Security.Cryptography.X509Certificates.X509Certificate((byte[])Iter);
-                                item.SubItems.Add(cert.ToString());
-                            }
-                            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectSid"))
-                            {
-                                System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier((byte[])Iter, 0);
-                                item.SubItems.Add(sid.ToString());
-                            }
-                            else if (
-                                System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectGUID")
-                                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchMailboxGuid")
-                                )
-                            {
-                                System.Guid guid = new System.Guid((byte[])Iter);
-                                item.SubItems.Add(guid.ToString());
-                            }
-                            else
-                            {
-                                item.SubItems.Add(Iter.ToString());
-                            }
-
+                            AddLdapObjectAsString(propertyName, Iter, item);
                             ctr_list.Items.AddRange(new ListViewItem[] { item });
                         } // Next Iter
 
                     } // Next listIter
+
+                    ctr_list.ListViewItemSorter = this.m_ColumnSorter;
+                    ctr_list.Sorting = SortOrder.Ascending;
+                    ctr_list.Sort();
 
                 } // End if (list != null)
 
@@ -260,6 +153,123 @@ namespace PropertyBrowser
             } // End Catch
 
         } // End Sub ctr_tree_AfterSelect
+
+
+        public static void AddLdapObjectAsString(string propertyName, object Iter, System.Windows.Forms.ListViewItem item)
+        {
+
+            // lastLogon	        System.__ComObject
+            // lastLogoff	        System.__ComObject
+            // lastLogonTimestamp	System.__ComObject
+
+            // accountExpires	System.__ComObject
+            // badPasswordTime	System.__ComObject
+            // pwdLastSet	    System.__ComObject
+            // lockoutTime	    System.__ComObject
+            // uSNCreated	    System.__ComObject
+            // uSNChanged	    System.__ComObject
+
+
+            // msExchMailboxGuid	            System.Byte[]
+            // msExchVersion	                System.__ComObject
+            // msExchMailboxSecurityDescriptor	System.__ComObject
+            // nTSecurityDescriptor	            System.__ComObject
+
+            if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogon")
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogoff")
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogonTimestamp")
+
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "pwdLastSet")
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "badPasswordTime")
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lockoutTime")
+
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNCreated")
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNChanged")
+
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "accountExpires")
+
+                )
+            {
+                // http://social.technet.microsoft.com/wiki/contents/articles/22461.understanding-the-ad-account-attributes-lastlogon-lastlogontimestamp-and-lastlogondate.aspx
+                // http://stackoverflow.com/questions/1602036/how-to-list-all-computers-and-the-last-time-they-were-logged-onto-in-ad
+                // http://stackoverflow.com/questions/33274162/the-namespace-of-iadslargeinteger
+                // Active DS Type Library
+
+                // System.Console.WriteLine(Iter);
+                // System.Console.WriteLine(str);
+                try
+                {
+
+                    // SecurityDescriptor sd = (SecurityDescriptor)ent.Properties["ntSecurityDescriptor"].Value;
+                    // ActiveDs.SecurityDescriptor sd = (ActiveDs.SecurityDescriptor)Iter;
+
+                    // sd.DiscretionaryAcl
+                    // ActiveDs.AccessControlList acl = (ActiveDs.AccessControlList)sd.DiscretionaryAcl;
+
+
+                    //foreach (ActiveDs.AccessControlEntry ace in (System.Collections.IEnumerable)acl)
+                    //{
+                    //    System.Console.WriteLine("Trustee: {0}", ace.Trustee);
+                    //    System.Console.WriteLine("AccessMask: {0}", ace.AccessMask);
+                    //    System.Console.WriteLine("Access Type: {0}", ace.AceType);
+                    //}
+
+
+
+                    // ActiveDs.IADsLargeInteger ISomeAdTime = (ActiveDs.IADsLargeInteger)Iter;
+                    // long lngSomeAdTime = (long)ISomeAdTime.HighPart << 32 | (uint)ISomeAdTime.LowPart;
+
+                    // IADsLargeInteger noActiveDsSomeTime = (IADsLargeInteger)Iter;
+                    // System.Console.WriteLine(noActiveDsSomeTime);
+
+                    long lngSomeAdTime = ConvertLargeIntegerToLong(Iter);
+
+                    System.DateTime someAdTime = System.DateTime.MaxValue;
+
+                    if (lngSomeAdTime == long.MaxValue || lngSomeAdTime <= 0 || System.DateTime.MaxValue.ToFileTime() <= lngSomeAdTime)
+                    {
+                        someAdTime = System.DateTime.MaxValue;
+                    }
+                    else
+                    {
+                        // someAdTime = System.DateTime.FromFileTime(lngSomeAdTime);
+                        someAdTime = System.DateTime.FromFileTimeUtc(lngSomeAdTime).ToLocalTime();
+                    }
+
+                    item.SubItems.Add(someAdTime.ToString("dd.MM.yyyy HH:mm:ss"));
+                }
+                catch (System.Exception ex)
+                {
+                    item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
+                }
+            }
+            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "userCertificate")
+                // || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQSignCertificates")
+                // || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQDigest")
+                )
+            {
+                System.Security.Cryptography.X509Certificates.X509Certificate cert = new System.Security.Cryptography.X509Certificates.X509Certificate((byte[])Iter);
+                item.SubItems.Add(cert.ToString());
+            }
+            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectSid"))
+            {
+                System.Security.Principal.SecurityIdentifier sid = new System.Security.Principal.SecurityIdentifier((byte[])Iter, 0);
+                item.SubItems.Add(sid.ToString());
+            }
+            else if (
+                System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectGUID")
+                || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchMailboxGuid")
+                )
+            {
+                System.Guid guid = new System.Guid((byte[])Iter);
+                item.SubItems.Add(guid.ToString());
+            }
+            else
+            {
+                item.SubItems.Add(Iter.ToString());
+            }
+
+        } // End Sub AddLdapObjectAsString 
 
 
         private static long ConvertLargeIntegerToLong(object largeInteger)
@@ -358,6 +368,47 @@ namespace PropertyBrowser
             string str = System.Convert.ToString(obj);
             System.Windows.Forms.MessageBox.Show(str);
         }
+
+
+
+        private static ListViewColumnSorter SetupColumnSorter()
+        {
+            ListViewColumnSorter lcs = new ListViewColumnSorter();
+            lcs.Order = SortOrder.Ascending;
+
+            return lcs;
+        }
+
+        ListViewColumnSorter m_ColumnSorter = SetupColumnSorter();
+
+
+        private void ctr_list_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            ListView lvSender = (ListView)sender;
+
+            // Determine if clicked column is already the column that is being sorted.
+            if (e.Column == this.m_ColumnSorter.SortColumn)
+            {
+                // Reverse the current sort direction for this column.
+                if (this.m_ColumnSorter.Order == SortOrder.Ascending)
+                {
+                    this.m_ColumnSorter.Order = SortOrder.Descending;
+                }
+                else
+                {
+                    this.m_ColumnSorter.Order = SortOrder.Ascending;
+                }
+            }
+            else
+            {
+                // Set the column number that is to be sorted; default to ascending.
+                this.m_ColumnSorter.SortColumn = e.Column;
+                this.m_ColumnSorter.Order = SortOrder.Ascending;
+            }
+
+            // Perform the sort with these new sort options.
+            lvSender.Sort();
+        } // End Sub ctr_list_ColumnClick 
 
 
     } // End Class frmPropertyBrowser : Form
