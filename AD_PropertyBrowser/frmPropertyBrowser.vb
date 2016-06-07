@@ -118,10 +118,6 @@ Public Class frmPropertyBrowser
 
     Public Shared Sub AddLdapObjectAsString(propertyName As String, Iter As Object, item As System.Windows.Forms.ListViewItem)
 
-        ' lastLogon	        System.__ComObject
-        ' lastLogoff	        System.__ComObject
-        ' lastLogonTimestamp	System.__ComObject
-
         ' accountExpires	System.__ComObject
         ' badPasswordTime	System.__ComObject
         ' pwdLastSet	    System.__ComObject
@@ -129,16 +125,38 @@ Public Class frmPropertyBrowser
         ' uSNCreated	    System.__ComObject
         ' uSNChanged	    System.__ComObject
 
+        ' lastLogon	        System.__ComObject
+        ' lastLogoff	        System.__ComObject
+        ' lastLogonTimestamp	System.__ComObject
 
-        ' msExchMailboxGuid	            System.Byte[]
-        ' msExchVersion	                System.__ComObject
-        ' msExchMailboxSecurityDescriptor	System.__ComObject
-        ' nTSecurityDescriptor	            System.__ComObject
+        ' forceLogoff System.__ComObject
+        ' creationTime System.__ComObject
+        ' maxPwdAge System.__ComObject
+        ' minPwdAge System.__ComObject
+
+        ' wellKnownObjects System.__ComObject
+        ' otherWellKnownObjects System.__ComObject
+
+        ' modifiedCount System.__ComObject
+        ' modifiedCountAtLastProm System.__ComObject
+
+        ' nTSecurityDescriptor System.__ComObject
+        ' msExchMailboxSecurityDescriptor System.__ComObject
 
 
 
+        'If System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "forceLogoff") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "creationTime") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "maxPwdAge") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "minPwdAge") Then
+        '    Try
+        '        Dim lngSomeAdTime As Long = ConvertLargeIntegerToLong(Iter)
+
+
+        '        item.SubItems.Add(lngSomeAdTime.ToString())
+        '    Catch ex As System.Exception
+        '        item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString())
+        '    End Try
 
         If System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogon") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogoff") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lastLogonTimestamp") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "pwdLastSet") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "badPasswordTime") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "lockoutTime") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNCreated") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "uSNChanged") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "accountExpires") Then
+
 
             ' http://social.technet.microsoft.com/wiki/contents/articles/22461.understanding-the-ad-account-attributes-lastlogon-lastlogontimestamp-and-lastlogondate.aspx
             ' http://stackoverflow.com/questions/1602036/how-to-list-all-computers-and-the-last-time-they-were-logged-onto-in-ad
@@ -186,6 +204,214 @@ Public Class frmPropertyBrowser
             Catch ex As System.Exception
                 item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString())
             End Try
+        ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchRecipientTypeDetails") Then
+            Try
+                Dim lngSomeVersion As Long = ConvertLargeIntegerToLong(Iter)
+                Dim strVersion As String = lngSomeVersion.ToString()
+                ' http://memphistech.net/?p=457
+                ' https://blogs.technet.microsoft.com/johnbai/2013/09/11/o365-exchange-and-ad-how-msexchrecipientdisplaytype-and-msexchangerecipienttypedetails-relate-to-your-on-premises/
+
+                Select Case lngSomeVersion
+
+                    Case 1
+                        strVersion = "User Mailbox"
+                    Case 2
+                        strVersion = "Linked Mailbox"
+                    Case 4
+                        strVersion = "Shared Mailbox"
+                    Case 8
+                        strVersion = "Legacy Mailbox"
+                    Case 16
+                        strVersion = "Room Mailbox"
+                    Case 32
+                        strVersion = "Equipment Mailbox"
+                    Case 64
+                        strVersion = "Mail Contact"
+                    Case 128
+                        strVersion = "Mail User"
+                    Case 256
+                        strVersion = "Mail-Enabled Universal Distribution Group"
+                    Case 512
+                        strVersion = "Mail-Enabled Non-Universal Distribution Group"
+                    Case 1024
+                        strVersion = "Mail-Enabled Universal Security Group"
+                    Case 2048
+                        strVersion = "Dynamic Distribution Group"
+                    Case 4096
+                        strVersion = "Public Folder"
+                    Case 8192
+                        strVersion = "System Attendant Mailbox"
+                    Case 16384
+                        strVersion = "System Mailbox"
+                    Case 32768
+                        strVersion = "Cross-Forest Mail Contact"
+                    Case 65536
+                        strVersion = "User"
+                    Case 131072
+                        strVersion = "Contact"
+                    Case 262144
+                        strVersion = "Universal Distribution Group"
+                    Case 524288
+                        strVersion = "Universal Security Group"
+                    Case 1048576
+                        strVersion = "Non-Universal Group"
+                    Case 2097152
+                        strVersion = "Disabled User"
+                    Case 4194304
+                        strVersion = "Microsoft Exchange"
+                    Case 8388608
+                        strVersion = "Arbitration Mailbox"
+                    Case 16777216
+                        strVersion = "Mailbox Plan"
+                    Case 33554432
+                        strVersion = "Linked User"
+                    Case 268435456
+                        strVersion = "Room List"
+                    Case 536870912
+                        strVersion = "Discovery Mailbox"
+                    Case 1073741824
+                        strVersion = "Role Group"
+                    Case 2147483648
+                        strVersion = "Remote Mailbox"
+                    Case 137438953472
+                        strVersion = "Team Mailbox"
+                    Case Else
+                        strVersion = lngSomeVersion.ToString()
+                End Select
+
+                item.SubItems.Add(strVersion)
+            Catch ex As System.Exception
+                item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString())
+            End Try
+
+        ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchRemoteRecipientType") Then
+            Try
+                Dim lngSomeVersion As System.Int64 = System.Convert.ToInt64(Iter)
+                Dim strVersion As String = lngSomeVersion.ToString()
+                ' http://memphistech.net/?p=457
+                ' https://blogs.technet.microsoft.com/johnbai/2013/09/11/o365-exchange-and-ad-how-msexchrecipientdisplaytype-and-msexchangerecipienttypedetails-relate-to-your-on-premises/
+
+                Select Case lngSomeVersion
+                    Case 1
+                        strVersion = "ProvisionedMailbox (Cloud MBX)"
+                    Case 2
+                        strVersion = "ProvisionedArchive (Cloud Archive)"
+                    Case 3
+                        strVersion = "ProvisionedMailbox, ProvisionedArchive" ' (mailbox provisioned in Cloud & Archive provisioned in Cloud)* either via EMC or new-remotemailbox cmd
+                    Case 4
+                        strVersion = "Migrated mailbox from on-prem"
+                    Case 6
+                        strVersion = "Migrated mailbox from on-prem, ProvisionedArchive in EXO" ' (mailbox migrated from on-prem & archive provisioned in Cloud)
+                    Case 16
+                        strVersion = "DeprovisionArchive"
+                    Case 20
+                        strVersion = "DeprovisionArchive, Migrated"
+                    Case 32
+                        strVersion = "RoomMailbox"
+                    Case 36
+                        strVersion = "Migrated, RoomMailbox"
+                    Case 64
+                        strVersion = "EquipmentMailbox"
+                    Case 68
+                        strVersion = "Migrated, EquipmentMailbox"
+                    Case 96
+                        strVersion = "SharedMailbox"
+                    Case 100
+                        strVersion = "Migrated, Shared Mailbox in EXO"
+                    Case Else
+                        strVersion = lngSomeVersion.ToString()
+                End Select
+
+                item.SubItems.Add(strVersion)
+            Catch ex As System.Exception
+                item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString())
+            End Try
+
+        ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchRecipientDisplayType") Then
+            Try
+                Dim lngSomeVersion As System.Int64 = System.Convert.ToInt64(Iter)
+                Dim strVersion As String = lngSomeVersion.ToString()
+                ' http://memphistech.net/?p=457
+
+                Select Case lngSomeVersion
+                    Case 0
+                        strVersion = "MailboxUser"
+                    Case 1
+                        strVersion = "DistrbutionGroup"
+                    Case 2
+                        strVersion = "PublicFolder"
+                    Case 3
+                        strVersion = "DynamicDistributionGroup"
+                    Case 4
+                        strVersion = "Organization"
+                    Case 5
+                        strVersion = "PrivateDistributionList"
+                    Case 6
+                        strVersion = "RemoteMailUser"
+                    Case 7
+                        strVersion = "ConferenceRoomMailbox"
+                    Case 8
+                        strVersion = "EquipmentMailbox"
+                    Case 1073741824
+                        strVersion = "ACLableMailboxUser"
+                    Case 1043741833
+                        strVersion = "SecurityDistributionGroup"
+                    Case -2147483642
+                        strVersion = "SyncedMailboxUser"
+                    Case -2147483391
+                        strVersion = "SyncedUDGasUDG"
+                    Case -2147483386
+                        strVersion = "SyncedUDGasContact"
+                    Case -2147483130
+                        strVersion = "SyncedPublicFolder"
+                    Case -2147482874
+                        strVersion = "SyncedDynamicDistributionGroup"
+                    Case -2147482106
+                        strVersion = "SyncedRemoteMailUser"
+                    Case -2147481850
+                        strVersion = "SyncedConferenceRoomMailbox"
+                    Case -2147481594
+                        strVersion = "SyncedEquipmentMailbox"
+                    Case -2147481343
+                        strVersion = "SyncedUSGasUDG"
+                    Case -2147481338
+                        strVersion = "SyncedUSGasContact"
+                    Case -1073741818
+                        strVersion = "ACLableSyncedMailboxUser"
+                    Case -1073740282
+                        strVersion = "ACLableSyncedRemoteMailUser"
+                    Case -1073739514
+                        strVersion = "ACLableSyncedUSGasContact"
+                    Case -1073739511
+                        strVersion = "SyncedUSGasUSG"
+                    Case Else
+                        strVersion = lngSomeVersion.ToString()
+                End Select
+
+                item.SubItems.Add(strVersion)
+            Catch ex As System.Exception
+                item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString())
+            End Try
+        ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchVersion") Then
+            Try
+                Dim lngSomeVersion As Long = ConvertLargeIntegerToLong(Iter)
+                Dim strVersion As String = ""
+
+                ' http://blogs.metcorpconsulting.com/tech/?p=1313
+                If lngSomeVersion < 4535486012416 Then
+                    strVersion = "Exchange 2003 and earlier (" + lngSomeVersion.ToString() + ")"
+                ElseIf lngSomeVersion = 4535486012416 Then
+                    strVersion = "Exchange 2007 (4535486012416)"
+                ElseIf lngSomeVersion = 44220983382016 Then
+                    strVersion = "Exchange 2010 (44220983382016)"
+                Else
+                    strVersion = lngSomeVersion.ToString()
+                End If
+
+                item.SubItems.Add(strVersion)
+            Catch ex As System.Exception
+                item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString())
+            End Try
         ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "userCertificate") Then
             ' || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQSignCertificates")
             ' || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQDigest")
@@ -197,6 +423,9 @@ Public Class frmPropertyBrowser
         ElseIf System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "objectGUID") OrElse System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchMailboxGuid") Then
             Dim guid As New System.Guid(DirectCast(Iter, Byte()))
             item.SubItems.Add(guid.ToString())
+        ElseIf Iter IsNot Nothing AndAlso Object.ReferenceEquals(Iter.GetType(), GetType(Byte())) Then
+            Dim ba As Byte() = DirectCast(Iter, Byte())
+            item.SubItems.Add("0x" + System.BitConverter.ToString(ba).Replace("-", ""))
         Else
             item.SubItems.Add(Iter.ToString())
         End If
@@ -205,7 +434,7 @@ Public Class frmPropertyBrowser
 
 
     Private Shared Function ConvertLargeIntegerToLong(largeInteger As Object) As Long
-        Dim t As System.Type = largeInteger.[GetType]()
+        Dim t As System.Type = largeInteger.GetType()
 
         Dim highPart As Integer = CInt(t.InvokeMember("HighPart", System.Reflection.BindingFlags.GetProperty, Nothing, largeInteger, Nothing))
         Dim lowPart As Integer = CInt(t.InvokeMember("LowPart", System.Reflection.BindingFlags.GetProperty Or System.Reflection.BindingFlags.[Public], Nothing, largeInteger, Nothing))
