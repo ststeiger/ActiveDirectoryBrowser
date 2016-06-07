@@ -243,6 +243,318 @@ namespace PropertyBrowser
                     item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
                 }
             }
+            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchRecipientTypeDetails"))
+            {
+                try
+                {
+                    long lngSomeVersion = ConvertLargeIntegerToLong(Iter);
+                    string strVersion = lngSomeVersion.ToString();
+                    // http://memphistech.net/?p=457
+                    // https://blogs.technet.microsoft.com/johnbai/2013/09/11/o365-exchange-and-ad-how-msexchrecipientdisplaytype-and-msexchangerecipienttypedetails-relate-to-your-on-premises/
+
+                    switch (lngSomeVersion)
+                    {
+
+                        case 1:
+                            strVersion = "User Mailbox";
+                            break;
+                        case 2:
+                            strVersion = "Linked Mailbox";
+                            break;
+                        case 4:
+                            strVersion = "Shared Mailbox";
+                            break;
+                        case 8:
+                            strVersion = "Legacy Mailbox";
+                            break;
+                        case 16:
+                            strVersion = "Room Mailbox";
+                            break;
+                        case 32:
+                            strVersion = "Equipment Mailbox";
+                            break;
+                        case 64:
+                            strVersion = "Mail Contact";
+                            break;
+                        case 128:
+                            strVersion = "Mail User";
+                            break;
+                        case 256:
+                            strVersion = "Mail-Enabled Universal Distribution Group";
+                            break;
+                        case 512:
+                            strVersion = "Mail-Enabled Non-Universal Distribution Group";
+                            break;
+                        case 1024:
+                            strVersion = "Mail-Enabled Universal Security Group";
+                            break;
+                        case 2048:
+                            strVersion = "Dynamic Distribution Group";
+                            break;
+                        case 4096:
+                            strVersion = "Public Folder";
+                            break;
+                        case 8192:
+                            strVersion = "System Attendant Mailbox";
+                            break;
+                        case 16384:
+                            strVersion = "System Mailbox";
+                            break;
+                        case 32768:
+                            strVersion = "Cross-Forest Mail Contact";
+                            break;
+                        case 65536:
+                            strVersion = "User";
+                            break;
+                        case 131072:
+                            strVersion = "Contact";
+                            break;
+                        case 262144:
+                            strVersion = "Universal Distribution Group";
+                            break;
+                        case 524288:
+                            strVersion = "Universal Security Group";
+                            break;
+                        case 1048576:
+                            strVersion = "Non-Universal Group";
+                            break;
+                        case 2097152:
+                            strVersion = "Disabled User";
+                            break;
+                        case 4194304:
+                            strVersion = "Microsoft Exchange";
+                            break;
+                        case 8388608:
+                            strVersion = "Arbitration Mailbox";
+                            break;
+                        case 16777216:
+                            strVersion = "Mailbox Plan";
+                            break;
+                        case 33554432:
+                            strVersion = "Linked User";
+                            break;
+                        case 268435456:
+                            strVersion = "Room List";
+                            break;
+                        case 536870912:
+                            strVersion = "Discovery Mailbox";
+                            break;
+                        case 1073741824:
+                            strVersion = "Role Group";
+                            break;
+                        case 2147483648L:
+                            strVersion = "Remote Mailbox";
+                            break;
+                        case 137438953472L:
+                            strVersion = "Team Mailbox";
+                            break;
+                        default:
+                            strVersion = lngSomeVersion.ToString();
+                            break;
+                    }
+
+                    item.SubItems.Add(strVersion);
+                }
+                catch (System.Exception ex)
+                {
+                    item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
+                }
+
+            }
+            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchRemoteRecipientType"))
+            {
+                try
+                {
+                    System.Int64 lngSomeVersion = System.Convert.ToInt64(Iter);
+                    string strVersion = lngSomeVersion.ToString();
+                    // http://memphistech.net/?p=457
+                    // https://blogs.technet.microsoft.com/johnbai/2013/09/11/o365-exchange-and-ad-how-msexchrecipientdisplaytype-and-msexchangerecipienttypedetails-relate-to-your-on-premises/
+
+                    switch (lngSomeVersion)
+                    {
+                        case 1:
+                            strVersion = "ProvisionedMailbox (Cloud MBX)";
+                            break;
+                        case 2:
+                            strVersion = "ProvisionedArchive (Cloud Archive)";
+                            break;
+                        case 3:
+                            strVersion = "ProvisionedMailbox, ProvisionedArchive";
+                            // (mailbox provisioned in Cloud & Archive provisioned in Cloud)* either via EMC or new-remotemailbox cmd
+                            break;
+                        case 4:
+                            strVersion = "Migrated mailbox from on-prem";
+                            break;
+                        case 6:
+                            strVersion = "Migrated mailbox from on-prem, ProvisionedArchive in EXO";
+                            // (mailbox migrated from on-prem & archive provisioned in Cloud)
+                            break;
+                        case 16:
+                            strVersion = "DeprovisionArchive";
+                            break;
+                        case 20:
+                            strVersion = "DeprovisionArchive, Migrated";
+                            break;
+                        case 32:
+                            strVersion = "RoomMailbox";
+                            break;
+                        case 36:
+                            strVersion = "Migrated, RoomMailbox";
+                            break;
+                        case 64:
+                            strVersion = "EquipmentMailbox";
+                            break;
+                        case 68:
+                            strVersion = "Migrated, EquipmentMailbox";
+                            break;
+                        case 96:
+                            strVersion = "SharedMailbox";
+                            break;
+                        case 100:
+                            strVersion = "Migrated, Shared Mailbox in EXO";
+                            break;
+                        default:
+                            strVersion = lngSomeVersion.ToString();
+                            break;
+                    }
+
+                    item.SubItems.Add(strVersion);
+                }
+                catch (System.Exception ex)
+                {
+                    item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
+                }
+
+            }
+            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchRecipientDisplayType"))
+            {
+                try
+                {
+                    System.Int64 lngSomeVersion = System.Convert.ToInt64(Iter);
+                    string strVersion = lngSomeVersion.ToString();
+                    // http://memphistech.net/?p=457
+
+                    switch (lngSomeVersion)
+                    {
+                        case 0:
+                            strVersion = "MailboxUser";
+                            break;
+                        case 1:
+                            strVersion = "DistrbutionGroup";
+                            break;
+                        case 2:
+                            strVersion = "PublicFolder";
+                            break;
+                        case 3:
+                            strVersion = "DynamicDistributionGroup";
+                            break;
+                        case 4:
+                            strVersion = "Organization";
+                            break;
+                        case 5:
+                            strVersion = "PrivateDistributionList";
+                            break;
+                        case 6:
+                            strVersion = "RemoteMailUser";
+                            break;
+                        case 7:
+                            strVersion = "ConferenceRoomMailbox";
+                            break;
+                        case 8:
+                            strVersion = "EquipmentMailbox";
+                            break;
+                        case 1073741824:
+                            strVersion = "ACLableMailboxUser";
+                            break;
+                        case 1043741833:
+                            strVersion = "SecurityDistributionGroup";
+                            break;
+                        case -2147483642:
+                            strVersion = "SyncedMailboxUser";
+                            break;
+                        case -2147483391:
+                            strVersion = "SyncedUDGasUDG";
+                            break;
+                        case -2147483386:
+                            strVersion = "SyncedUDGasContact";
+                            break;
+                        case -2147483130:
+                            strVersion = "SyncedPublicFolder";
+                            break;
+                        case -2147482874:
+                            strVersion = "SyncedDynamicDistributionGroup";
+                            break;
+                        case -2147482106:
+                            strVersion = "SyncedRemoteMailUser";
+                            break;
+                        case -2147481850:
+                            strVersion = "SyncedConferenceRoomMailbox";
+                            break;
+                        case -2147481594:
+                            strVersion = "SyncedEquipmentMailbox";
+                            break;
+                        case -2147481343:
+                            strVersion = "SyncedUSGasUDG";
+                            break;
+                        case -2147481338:
+                            strVersion = "SyncedUSGasContact";
+                            break;
+                        case -1073741818:
+                            strVersion = "ACLableSyncedMailboxUser";
+                            break;
+                        case -1073740282:
+                            strVersion = "ACLableSyncedRemoteMailUser";
+                            break;
+                        case -1073739514:
+                            strVersion = "ACLableSyncedUSGasContact";
+                            break;
+                        case -1073739511:
+                            strVersion = "SyncedUSGasUSG";
+                            break;
+                        default:
+                            strVersion = lngSomeVersion.ToString();
+                            break;
+                    }
+
+                    item.SubItems.Add(strVersion);
+                }
+                catch (System.Exception ex)
+                {
+                    item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
+                }
+            }
+            else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "msExchVersion"))
+            {
+                try
+                {
+                    long lngSomeVersion = ConvertLargeIntegerToLong(Iter);
+                    string strVersion = "";
+
+                    // http://blogs.metcorpconsulting.com/tech/?p=1313
+                    if (lngSomeVersion < 4535486012416L)
+                    {
+                        strVersion = "Exchange 2003 and earlier (" + lngSomeVersion.ToString() + ")";
+                    }
+                    else if (lngSomeVersion == 4535486012416L)
+                    {
+                        strVersion = "Exchange 2007 (4535486012416)";
+                    }
+                    else if (lngSomeVersion == 44220983382016L)
+                    {
+                        strVersion = "Exchange 2010 (44220983382016)";
+                    }
+                    else
+                    {
+                        strVersion = lngSomeVersion.ToString();
+                    }
+
+                    item.SubItems.Add(strVersion);
+                }
+                catch (System.Exception ex)
+                {
+                    item.SubItems.Add(ex.Message + System.Environment.NewLine + Iter.ToString());
+                }
+            }
             else if (System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "userCertificate")
                 // || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQSignCertificates")
                 // || System.StringComparer.OrdinalIgnoreCase.Equals(propertyName, "mSMQDigest")
@@ -263,6 +575,11 @@ namespace PropertyBrowser
             {
                 System.Guid guid = new System.Guid((byte[])Iter);
                 item.SubItems.Add(guid.ToString());
+            }
+            else if (Iter != null && object.ReferenceEquals(Iter.GetType(), typeof(byte[])))
+            {
+                byte[] ba = (byte[])Iter;
+                item.SubItems.Add("0x" + System.BitConverter.ToString(ba).Replace("-", ""));
             }
             else
             {
