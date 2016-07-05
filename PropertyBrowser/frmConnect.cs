@@ -177,9 +177,9 @@ namespace PropertyBrowser
 
         private void btnSearchUser_Click(object sender, System.EventArgs e)
         {
-            FindLockedAccounts();
-            //System.Windows.Forms.Form myfrm = new frmSearchUser(this.txtDomain.Text);
-            //myfrm.Show();
+            // FindLockedAccounts();
+            System.Windows.Forms.Form myfrm = new frmSearchUser(this.txtDomain.Text);
+            myfrm.Show();
             System.Console.WriteLine("Hello");
         } // End Sub cbIntegratedSecurity_CheckedChanged
 

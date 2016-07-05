@@ -54,6 +54,13 @@ namespace PropertyBrowser
             listviewY = (ListViewItem)y;
 
             // Compare the two items
+
+            if (0 == string.Compare(listviewX.SubItems[ColumnToSort].Text, "objectClass", true))
+            {
+                System.Console.WriteLine(listviewX.SubItems[ColumnToSort].Text);
+                return -1;
+            }
+
             compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text, listviewY.SubItems[ColumnToSort].Text);
 
             // Calculate correct return value based on object comparison
