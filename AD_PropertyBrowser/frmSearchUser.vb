@@ -73,7 +73,11 @@
 
                 Dim strUserCondition As String = ""
                 If Not String.IsNullOrEmpty(strUserName) Then
-                    strUserCondition = (Convert.ToString("(samAccountName=") & strUserName) + ")"
+                    ' strUserCondition = "(samAccountName=" & strUserName & ")"
+
+                    strUserCondition = "(|(samAccountName=" + strUserName + ")"
+                    strUserCondition += "(userPrincipalName=" + strUserName + ")"
+                    strUserCondition += "(mail=" + strUserName + "))"
                 End If
 
                 'UserAccountControl will only Include Non-Disabled Users.

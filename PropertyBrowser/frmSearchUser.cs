@@ -67,12 +67,18 @@ namespace PropertyBrowser
                     //search.Filter = "(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2))";//UserAccountControl will only Include Non-Disabled Users.
 
                     string strUserCondition = "";
-                    if(!string.IsNullOrEmpty(strUserName))
-                        strUserCondition = "(samAccountName=" + strUserName + ")";
+                    if (!string.IsNullOrEmpty(strUserName))
+                    {
+                        // strUserCondition = "(samAccountName=" + strUserName + ")";
+                        strUserCondition = "(|(samAccountName=" + strUserName + ")";
+                        strUserCondition += "(userPrincipalName=" + strUserName + ")";
+                        strUserCondition += "(mail=" + strUserName + "))";
+                    }
+
 
                     //UserAccountControl will only Include Non-Disabled Users.
                     //search.Filter = "(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2)(samAccountName=stefan.steiger))";
-                    
+
                     search.Filter = string.Format("(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2){0})", strUserCondition);
 
                     using (System.DirectoryServices.SearchResultCollection result = search.FindAll())
