@@ -199,6 +199,106 @@ namespace PropertyBrowser
         } // End Function GetUserList
 
 
+        private System.Data.DataTable GetGroupList(string strUserName)
+        {
+            System.Data.DataTable dt = new System.Data.DataTable();
+
+            dt.Columns.Add("sAMAccountName", typeof(string));
+            dt.Columns.Add("DistinguishedName", typeof(string));
+            dt.Columns.Add("cn", typeof(string));
+            dt.Columns.Add("DomainName", typeof(string));
+
+
+            //using (System.DirectoryServices.DirectoryEntry rootDSE = new System.DirectoryServices.DirectoryEntry("LDAP://DC=cor,DC=local", username, password))
+            using (System.DirectoryServices.DirectoryEntry rootDSE = LdapTools.GetDE(m_RootDn))
+            {
+
+                using (System.DirectoryServices.DirectorySearcher search = new System.DirectoryServices.DirectorySearcher(rootDSE))
+                {
+                    search.PageSize = 1001;// To Pull up more than 100 records.
+
+                    //search.Filter = "(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2))";//UserAccountControl will only Include Non-Disabled Users.
+
+                    string strUserCondition = "";
+                    if (!string.IsNullOrEmpty(strUserName))
+                    {
+                        // strUserCondition = "(samAccountName=" + strUserName + ")";
+                        strUserCondition = "(|(samAccountName=" + strUserName + ")";
+                        strUserCondition += "(cn=" + strUserName + ")";
+                        strUserCondition += "(name=" + strUserName + "))";
+                    }
+
+
+                    //UserAccountControl will only Include Non-Disabled Users.
+                    //search.Filter = "(&(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2)(samAccountName=stefan.steiger))";
+                    search.Filter = string.Format("(&(objectClass=group)(!userAccountControl:1.2.840.113556.1.4.803:=2){0})", strUserCondition);
+
+                    using (System.DirectoryServices.SearchResultCollection result = search.FindAll())
+                    {
+
+                        foreach (System.DirectoryServices.SearchResult item in result)
+                        {
+                            string sAMAccountName = null;
+                            string DistinguishedName = null;
+                            string cn = null;
+                            string DomainName = null;
+
+
+                            if (item.Properties["sAMAccountName"].Count > 0)
+                            {
+                                sAMAccountName = item.Properties["sAMAccountName"][0].ToString();
+                            }
+
+                            if (item.Properties["distinguishedName"].Count > 0)
+                            {
+                                DistinguishedName = item.Properties["distinguishedName"][0].ToString();
+                            }
+
+                            if (item.Properties["cn"].Count > 0)
+                            {
+                                cn = item.Properties["cn"][0].ToString();
+                            }
+
+
+                            if (item.Properties["SamAccountName"].Count > 0)
+                            {
+                                DomainName = item.Properties["SamAccountName"][0].ToString();
+                            }
+
+
+                            if (item.Properties["DistinguishedName"].Count > 0)
+                            {
+                                DistinguishedName = item.Properties["DistinguishedName"][0].ToString();
+                            }
+
+
+                            System.Data.DataRow dr = dt.NewRow();
+
+                            dr["sAMAccountName"] = sAMAccountName;
+                            dr["DistinguishedName"] = DistinguishedName;
+                            dr["cn"] = cn;
+                            dr["DomainName"] = DomainName;
+
+                            dt.Rows.Add(dr);
+
+                            sAMAccountName = string.Empty;
+                            DistinguishedName = string.Empty;
+                            cn = string.Empty;
+                            DomainName = string.Empty;
+
+                            //rootDSE.Dispose();
+                        } // Next SearchResult item 
+
+                    } // End Using SearchResultCollection result 
+
+                } // End Using search 
+
+            } // End Using rootDSE
+
+            return dt;
+        } // End Function GetGroupList
+
+
 
         private void btnAuth_Click(object sender, System.EventArgs e)
         {
@@ -214,7 +314,13 @@ namespace PropertyBrowser
             System.Windows.Forms.MessageBox.Show(System.Convert.ToString(obj));
         } // End Sub MsgBox
 
+        private void btnGroup_Click(object sender, System.EventArgs e)
+        {
+            string groupName = this.txtGroup.Text;
+            this.dgvDisplayData.DataSource = GetGroupList(groupName).DefaultView;
 
+            this.dgvDisplayData.Sort(this.dgvDisplayData.Columns[this.dgvDisplayData.Columns[0].Name], System.ComponentModel.ListSortDirection.Ascending);
+        }
     } // End Class frmSearchUser : Form
 
 
